@@ -10,10 +10,24 @@ class MoviesController < ApplicationController
     # will render app/views/movies/show.<extension> by default
   end
 
+  #https://www.rubydoc.info/docs/rails/4.1.7/ActiveRecord%2FQueryMethods:order
   def index
-    @movies = Movie.all
+    
+    if(params["ordering"]=="title")
+      @movies= Movie.order("title")
+      @titleSorted=true
+      @releaseDateSorted=false
+    elsif(params["ordering"]=="release_date")
+      @movies= Movie.order("release_date")
+      @releaseDateSorted=true
+      @titleSorted=false
+    else
+      @movies = Movie.all
+      @releaseDateSorted=false
+      @titleSorted=false
+    end
   end
-
+  
   def new
     # default: render 'new' template
   end
