@@ -13,7 +13,7 @@ class MoviesController < ApplicationController
 
   #https://www.rubydoc.info/docs/rails/4.1.7/ActiveRecord%2FQueryMethods:order
   def index
-    
+    @all_ratings = Movie.list_ratings
     if(params["ordering"]=="title")
       @movies= Movie.order("title")
       @titleSorted=true
@@ -23,7 +23,12 @@ class MoviesController < ApplicationController
       @releaseDateSorted=true
       @titleSorted=false
     else
-      @movies = Movie.all
+      if(params["ratings"] == nil)
+        @movies = Movie.all
+      else
+        ratingKeys = params["ratings"].keys
+        @movies = Movie.where(rating: ratingKeys)
+      end
       @releaseDateSorted=false
       @titleSorted=false
     end
