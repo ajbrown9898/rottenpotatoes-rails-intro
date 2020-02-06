@@ -12,16 +12,51 @@ class MoviesController < ApplicationController
   end
 
   #https://www.rubydoc.info/docs/rails/4.1.7/ActiveRecord%2FQueryMethods:order
+  #https://stackoverflow.com/questions/2989762/multi-line-comments-in-ruby
+  #https://apidock.com/rails/ActiveRecord/QueryMethods/order
   def index
     @all_ratings = Movie.list_ratings
-    if(params["ordering"]=="title")
-      @movies= Movie.order("title")
-      @titleSorted=true
-      @releaseDateSorted=false
-    elsif(params["ordering"]=="release_date")
-      @movies= Movie.order("release_date")
-      @releaseDateSorted=true
-      @titleSorted=false
+    if(params["ordering"] == nil && params["ratings"] == nil)
+      if(session["ordering"] == nil)
+        session["ordering"] = "none"
+      end
+      if(session["ratings"] == nil)
+        session["ratings"] = {"G"=>1, "PG"=>1, "PG-13"=>1, "R"=>1}
+      end
+      redirect_to movies_path(:ordering => session["ordering"], :ratings => session["ratings"])
+    elsif(params["ordering"] == nil)
+      if(session["ordering"] == nil)
+        session["ordering"] = "none"
+      end
+      redirect_to movies_path(:ordering => session["ordering"], :ratings => params["ratings"])
+    elsif(params["ratings"] == nil)
+      if(session["ratings"] == nil)
+        session["ratings"] = {"G"=>1, "PG"=>1, "PG-13"=>1, "R"=>1}
+      end
+      redirect_to movies_path(:ordering => params["ordering"], :ratings => session["ratings"])
+    else
+      session["ordering"] = params["ordering"]
+      session["ratings"] = params["ratings"]
+      if(params["ordering"] == 'title')
+        @titleSorted = true
+        @releaseDateSorted = false
+        ratingsKeys = params["ratings"].keys
+        @movies = Movie.where(rating: ratingsKeys).order("title")
+      elsif(params["ordering"] == 'release_date')
+        @titleSorted = false
+        @releaseDateSorted = true
+        ratingsKeys = params["ratings"].keys
+        @movies = Movie.where(rating: ratingsKeys).order("release_date")
+      else
+        @titleSorted = false
+        @releaseDateSorted = false
+        ratingsKeys = params["ratings"].keys
+        @movies = Movie.where(rating: ratingsKeys)
+      end
+    end
+
+    
+=begin
     else
       if(params["ratings"] == nil)
         @movies = Movie.all
@@ -32,6 +67,7 @@ class MoviesController < ApplicationController
       @releaseDateSorted=false
       @titleSorted=false
     end
+=end
   end
   
   def new
