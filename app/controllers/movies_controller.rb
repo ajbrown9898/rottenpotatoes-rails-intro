@@ -37,6 +37,18 @@ class MoviesController < ApplicationController
     else
       session["ordering"] = params["ordering"]
       session["ratings"] = params["ratings"]
+      @ratingChecked = {"G"=>false, "PG"=>false, "PG-13"=>false, "R"=>false}
+      @all_ratings.each do |checkboxRating|
+        puts("#{checkboxRating}")
+        if(params["ratings"].keys.include?(checkboxRating))
+          puts("Matched")
+          @ratingChecked[checkboxRating] = true
+        end
+      end
+      #https://rubyonrails.org/
+      #https://www.geeksforgeeks.org/ruby-operators/
+      #https://docs.ruby-lang.org/en/2.0.0/Array.html
+      #https://www.w3schools.com/tags/att_input_type_checkbox.asp
       if(params["ordering"] == 'title')
         @titleSorted = true
         @releaseDateSorted = false
