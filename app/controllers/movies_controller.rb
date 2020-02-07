@@ -52,17 +52,20 @@ class MoviesController < ApplicationController
       if(params["ordering"] == 'title')
         @titleSorted = true
         @releaseDateSorted = false
-        ratingsKeys = params["ratings"].keys
+        ratingsKeys = params["ratings"].keys.map{|s| s.upcase}
+        puts(ratingsKeys)
         @movies = Movie.where(rating: ratingsKeys).order("title")
       elsif(params["ordering"] == 'release_date')
         @titleSorted = false
         @releaseDateSorted = true
-        ratingsKeys = params["ratings"].keys
+        ratingsKeys = params["ratings"].keys.map{|s| s.upcase}
+        puts(ratingsKeys)
         @movies = Movie.where(rating: ratingsKeys).order("release_date")
       else
         @titleSorted = false
         @releaseDateSorted = false
-        ratingsKeys = params["ratings"].keys
+        ratingsKeys = params["ratings"].keys.map{|s| s.upcase}
+        puts(ratingsKeys)
         @movies = Movie.where(rating: ratingsKeys)
       end
     end
